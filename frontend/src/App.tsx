@@ -67,6 +67,8 @@ function ClimateAtlas() {
     scenario
   );
   const { data: comparisonData } = useClimateComparison(variable, period, scenario);
+  // Always fetch 2080 comparison for panel display (regardless of map period)
+  const { data: panelComparisonData } = useClimateComparison(variable, "2080", scenario);
   const { data: rangeData } = useClimateRange(variable, period, scenario);
 
   // Get current variable info
@@ -201,8 +203,8 @@ function ClimateAtlas() {
           const districtName = districtFeature?.properties.name || selectedDistrictId;
           const regionName = districtFeature?.properties.region || "Ghana";
 
-          // Find comparison data for this district
-          const districtComparison = comparisonData?.data.find(
+          // Find comparison data for this district (use panel comparison data which always fetches 2080)
+          const districtComparison = panelComparisonData?.data.find(
             (d) => d.district_id === selectedDistrictId
           );
 

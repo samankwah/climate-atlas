@@ -16,6 +16,8 @@
     "d3-interpolate": "^3.0.1",
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
+    "highcharts": "^12.5.0",
+    "highcharts-react-official": "^3.2.3",
     "leaflet": "^1.9.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

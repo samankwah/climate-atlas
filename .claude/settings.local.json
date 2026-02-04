@@ -25,7 +25,8 @@
       "Bash(powershell -Command \"[System.IO.File]::ReadAllText\\(''ghana_regions.geojson''\\)\")",
       "Bash(npm uninstall:*)",
       "Bash(cd:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebFetch(domain:www.highcharts.com)"
     ]
   }
 }
