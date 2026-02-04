@@ -3,8 +3,8 @@
 import { GeoJSON } from "react-leaflet";
 import { useMemo } from "react";
 import type { PathOptions } from "leaflet";
-import type { Feature } from "geojson";
-import ghanaRegions from "../../assets/ghana_regions.geojson";
+import type { FeatureCollection, Feature } from "geojson";
+import ghanaRegionsRaw from "../../assets/ghana_regions.geojson";
 
 interface RegionalBoundariesProps {
   visible?: boolean;
@@ -19,33 +19,33 @@ const RegionalBoundaries: React.FC<RegionalBoundariesProps> = ({
   color = "#ffffff",
   weight = 1.5,
 }) => {
+  // Clean the GeoJSON - remove crs property that Leaflet doesn't support
+  const ghanaRegions = useMemo((): FeatureCollection => {
+    const raw = ghanaRegionsRaw as unknown as { features: Feature[] };
+    return {
+      type: "FeatureCollection",
+      features: raw.features,
+    };
+  }, []);
+
   const style = useMemo(
     (): PathOptions => ({
       fillOpacity: 0,
       weight,
       color,
       opacity,
+      interactive: false, // Allow clicks to pass through to layers below
     }),
     [opacity, color, weight]
   );
-
-  const onEachFeature = (feature: Feature, layer: L.Layer) => {
-    const regionName = feature.properties?.name;
-    if (regionName) {
-      layer.bindTooltip(regionName, {
-        sticky: true,
-        className: "region-tooltip",
-      });
-    }
-  };
 
   if (!visible) return null;
 
   return (
     <GeoJSON
-      data={ghanaRegions as GeoJSON.FeatureCollection}
+      data={ghanaRegions}
       style={style}
-      onEachFeature={onEachFeature}
+      interactive={false}
     />
   );
 };

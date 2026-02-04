@@ -8,7 +8,10 @@ import {
   gridToImageData,
   GHANA_BOUNDS,
   type DataPoint,
+  type Polygon,
+  type MultiPolygon,
 } from "../../utils/idwInterpolation";
+import ghanaRegionsRaw from "../../assets/ghana_regions.geojson";
 
 interface InterpolatedLayerProps {
   dataPoints: DataPoint[];
@@ -19,6 +22,26 @@ interface InterpolatedLayerProps {
   opacity?: number;
   idwPower?: number;
 }
+
+// Extract Ghana boundary geometries from GeoJSON
+const getGhanaBoundary = (): { type: string; coordinates: Polygon | MultiPolygon }[] => {
+  const raw = ghanaRegionsRaw as unknown as {
+    features: Array<{
+      geometry: {
+        type: string;
+        coordinates: Polygon | MultiPolygon;
+      };
+    }>;
+  };
+
+  return raw.features.map((feature) => ({
+    type: feature.geometry.type,
+    coordinates: feature.geometry.coordinates,
+  }));
+};
+
+// Memoize Ghana boundary extraction (only computed once)
+const ghanaBoundary = getGhanaBoundary();
 
 const InterpolatedLayer: React.FC<InterpolatedLayerProps> = ({
   dataPoints,
@@ -32,7 +55,7 @@ const InterpolatedLayer: React.FC<InterpolatedLayerProps> = ({
   const map = useMap();
   const imageOverlayRef = useRef<L.ImageOverlay | null>(null);
 
-  // Generate the interpolated grid (memoized)
+  // Generate the interpolated grid with Ghana boundary mask (memoized)
   const gridResult = useMemo(() => {
     if (dataPoints.length === 0) return null;
 
@@ -40,7 +63,8 @@ const InterpolatedLayer: React.FC<InterpolatedLayerProps> = ({
       GHANA_BOUNDS,
       dataPoints,
       resolution,
-      { power: idwPower }
+      { power: idwPower },
+      ghanaBoundary
     );
   }, [dataPoints, resolution, idwPower]);
 

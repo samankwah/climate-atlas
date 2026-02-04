@@ -7,7 +7,7 @@ import Header from "./components/Header/Header";
 import MapLayerToggles from "./components/Sidebar/MapLayerToggles";
 import TimelineBar from "./components/Timeline/TimelineBar";
 import CategoryTabs, { type Category } from "./components/Categories/CategoryTabs";
-import DistrictInfo from "./components/InfoPanel/DistrictInfo";
+import DistrictDetailPanel from "./components/InfoPanel/DistrictDetailPanel";
 import {
   useDistricts,
   useClimateVariables,
@@ -17,6 +17,7 @@ import {
 } from "./hooks/useClimateData";
 import { useMapControls } from "./hooks/useMapControls";
 import type { ColorScaleType } from "./utils/colorScales";
+import type { Scenario, Period } from "./types/climate";
 import "./App.css";
 
 const queryClient = new QueryClient({
@@ -191,20 +192,40 @@ function ClimateAtlas() {
           </div>
         )}
 
-        {/* District info panel (floating) */}
-        {selectedDistrictId && (
-          <div className="district-info-overlay">
-            <DistrictInfo
+        {/* District detail panel (sliding side panel) */}
+        {selectedDistrictId && (() => {
+          // Find district info from GeoJSON
+          const districtFeature = districts?.features.find(
+            (f) => f.properties.id === selectedDistrictId
+          );
+          const districtName = districtFeature?.properties.name || selectedDistrictId;
+          const regionName = districtFeature?.properties.region || "Ghana";
+
+          // Find comparison data for this district
+          const districtComparison = comparisonData?.data.find(
+            (d) => d.district_id === selectedDistrictId
+          );
+
+          // Find baseline value from climate data
+          const baselineValue = climateData?.data.find(
+            (d) => d.district_id === selectedDistrictId
+          )?.value;
+
+          return (
+            <DistrictDetailPanel
               districtId={selectedDistrictId}
-              climateData={climateData?.data}
-              comparisonData={comparisonData?.data}
+              districtName={districtName}
+              regionName={regionName}
+              variable={variable}
               variableInfo={currentVariable}
-              period={period}
-              scenario={scenario}
+              scenario={scenario as Scenario}
+              period={period as Period}
+              comparisonData={districtComparison}
+              baselineValue={baselineValue}
               onClose={() => selectDistrict(null)}
             />
-          </div>
-        )}
+          );
+        })()}
 
         {/* Bottom control bar - timeline + category tabs */}
         <div className="bottom-control-bar">

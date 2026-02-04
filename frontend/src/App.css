@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* Ghana Climate Atlas - Redesigned Dark Theme Styles */
 /* Inspired by Canada Climate Atlas (climateatlas.ca) */
 
@@ -770,9 +772,16 @@ body {
 /* ================================
    Category Tabs - Full width bar at bottom
    ================================ */
+.category-tabs-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
 .category-tabs {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   gap: 2rem;
   padding: 1rem 2rem;
@@ -780,6 +789,13 @@ body {
   width: 100%;
   background: rgba(30, 41, 59, 0.98);
   backdrop-filter: blur(8px);
+}
+
+.category-tab-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .category-tab {
@@ -815,6 +831,10 @@ body {
   font-weight: 600;
 }
 
+.category-tab.panel-open .tab-icon {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
 /* Category tab icon squares */
 .tab-icon {
   display: flex;
@@ -823,7 +843,8 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 12px;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
 }
 
 .tab-icon svg {
@@ -835,6 +856,138 @@ body {
 .tab-label {
   font-size: 0.8125rem;
   font-weight: 500;
+}
+
+/* Selection badge on tab icon */
+.selection-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  background: #22d3ee;
+  color: #0f172a;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* ================================
+   Category Panel - Dropdown for parameters
+   ================================ */
+.category-panel-anchor {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 8px;
+  z-index: 600;
+}
+
+.category-panel {
+  width: 280px;
+  background: #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.category-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  color: white;
+}
+
+.category-panel-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.category-panel-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 3px;
+  color: white;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.category-panel-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.category-panel-body {
+  padding: 8px 0;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.category-panel-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.category-panel-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.category-panel-checkbox {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #22d3ee;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.expand-arrow {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.category-panel-label {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+/* Scrollbar for panel */
+.category-panel-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-panel-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.category-panel-body::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.category-panel-body::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }
 
 
@@ -1121,6 +1274,21 @@ body {
   .map-label {
     display: none;
   }
+
+  /* Category panel mobile responsiveness */
+  .category-panel-anchor {
+    position: fixed;
+    left: 50%;
+    bottom: auto;
+    top: 50%;
+    margin-bottom: 0;
+    transform: translate(-50%, -50%);
+  }
+
+  .category-panel {
+    width: 90vw;
+    max-width: 320px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1176,5 +1344,793 @@ body {
     left: 0.5rem;
     right: 0.5rem;
     max-width: none;
+  }
+
+  /* Category panel mobile responsiveness - smaller screens */
+  .category-panel {
+    width: 95vw;
+    max-height: 60vh;
+  }
+
+  .category-panel-body {
+    max-height: 45vh;
+  }
+}
+
+/* ================================
+   Custom Scrollbar for Popovers/Modals
+   ================================ */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* ================================
+   Parameter Info Modal - Canada Atlas Style
+   ================================ */
+.parameter-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.parameter-modal {
+  display: grid;
+  grid-template-columns: 35% 65%;
+  grid-template-rows: 1fr auto;
+  width: 100%;
+  max-width: 1400px;
+  height: 85vh;
+  background: #2d3748;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+
+.parameter-modal-left {
+  grid-row: 1;
+  background: #1e293b;
+  padding: 2.5rem;
+  border-right: 1px solid #475569;
+  display: flex;
+  flex-direction: column;
+}
+
+.parameter-modal-right {
+  grid-row: 1;
+  padding: 2.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: #334155;
+}
+
+/* Left panel sections */
+.modal-section {
+  margin-bottom: 2rem;
+}
+
+.modal-section h4 {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin: 0 0 0.5rem 0;
+}
+
+.modal-highlight {
+  color: #f59e0b;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.modal-divider {
+  height: 1px;
+  background: #475569;
+  margin: 0.5rem 0 2rem 0;
+}
+
+.modal-section-parameter {
+  margin-top: auto;
+}
+
+.modal-param-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem 0;
+  line-height: 1.3;
+}
+
+.modal-short-desc {
+  color: #adbac7;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Right panel - Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #e6edf3;
+  margin: 0;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: 2px solid #f59e0b;
+  color: #f59e0b;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal-close-btn:hover {
+  background: #f59e0b;
+  color: #0d1117;
+}
+
+.modal-about-text {
+  color: #e6edf3;
+  font-size: 1rem;
+  line-height: 1.8;
+  margin: 0 0 2rem 0;
+}
+
+/* Technical description toggle */
+.modal-tech-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 1rem 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  width: 100%;
+  text-align: left;
+  border-top: 1px solid #475569;
+}
+
+.modal-tech-toggle:hover {
+  color: #f1f5f9;
+}
+
+.modal-tech-content {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-formula {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.9375rem;
+  color: #58a6ff;
+  background: rgba(56, 139, 253, 0.1);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin: 0 0 1rem 0;
+  border-left: 3px solid #58a6ff;
+}
+
+.modal-tech-text {
+  color: #adbac7;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* Legend section */
+.modal-legend {
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.modal-legend h4 {
+  color: #e6edf3;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.375rem 0;
+}
+
+.modal-legend-unit {
+  color: #94a3b8;
+  font-size: 0.875rem;
+  margin: 0 0 0.875rem 0;
+}
+
+.modal-legend-gradient {
+  height: 16px;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  max-width: 300px;
+}
+
+.modal-legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #94a3b8;
+  max-width: 300px;
+}
+
+/* Return button footer */
+.modal-return {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: #1e293b;
+  border: none;
+  border-top: 1px solid #475569;
+  color: #f59e0b;
+  padding: 1rem 2.5rem;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+.modal-return:hover {
+  background: #334155;
+}
+
+/* Make parameter labels clickable */
+.category-panel-label.clickable {
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.category-panel-label.clickable:hover {
+  color: #f59e0b;
+  text-decoration: underline;
+}
+
+/* Parameter Info Modal - Mobile responsive */
+@media (max-width: 900px) {
+  .parameter-modal-overlay {
+    padding: 1rem;
+  }
+
+  .parameter-modal {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    height: auto;
+    max-height: 95vh;
+  }
+
+  .parameter-modal-left {
+    border-right: none;
+    border-bottom: 1px solid #475569;
+    padding: 1.5rem;
+  }
+
+  .parameter-modal-right {
+    padding: 1.5rem;
+  }
+
+  .modal-section {
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-divider {
+    margin: 0.25rem 0 1.25rem 0;
+  }
+
+  .modal-section-parameter {
+    margin-top: 0;
+  }
+
+  .modal-param-name {
+    font-size: 1.25rem;
+  }
+
+  .modal-legend-gradient,
+  .modal-legend-labels {
+    max-width: 100%;
+  }
+
+  .modal-return {
+    padding: 1rem 1.5rem;
+  }
+}
+
+/* ================================
+   District Detail Panel - Sliding Side Panel
+   ================================ */
+.district-detail-panel {
+  position: fixed;
+  top: var(--header-height);
+  right: 0;
+  width: 380px;
+  height: calc(100vh - var(--header-height));
+  background: #1e293b;
+  border-left: 1px solid #475569;
+  padding: 1.5rem;
+  overflow-y: auto;
+  z-index: 500;
+  animation: slideInPanel 0.3s ease-out;
+}
+
+@keyframes slideInPanel {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.panel-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #94a3b8;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #e2e8f0;
+}
+
+/* District header in panel */
+.district-detail-panel .district-header {
+  margin-bottom: 1.5rem;
+  padding-right: 2rem;
+}
+
+.district-detail-panel .region-label {
+  color: #94a3b8;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.district-detail-panel .district-name {
+  color: #f59e0b;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.district-detail-panel .variable-info {
+  color: #e2e8f0;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.district-detail-panel .scenario-badge {
+  color: #94a3b8;
+  font-size: 0.8125rem;
+}
+
+/* Value comparison section */
+.value-comparison {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 0;
+  border-top: 1px solid #475569;
+  border-bottom: 1px solid #475569;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.value-comparison.single {
+  justify-content: center;
+}
+
+.value-comparison .period-value {
+  text-align: center;
+  flex: 1;
+  min-width: 80px;
+}
+
+.value-comparison .period-label {
+  color: #94a3b8;
+  font-size: 0.6875rem;
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.value-comparison .value {
+  color: #ffffff;
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.value-comparison .value.future {
+  color: #fbbf24;
+}
+
+.comparison-arrow {
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.change-badge {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  padding: 0.375rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.change-badge.decrease {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
+
+/* Chart section */
+.chart-section {
+  margin-top: 1.5rem;
+  padding-bottom: 1rem;
+}
+
+.chart-title {
+  color: #94a3b8;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.chart-subtitle {
+  color: #e2e8f0;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.chart-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.spinner-small {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #475569;
+  border-top-color: #f59e0b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.chart-empty {
+  text-align: center;
+  padding: 2rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Chart tooltip */
+.chart-tooltip {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  padding: 0.75rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.chart-tooltip .tooltip-header {
+  color: #f59e0b;
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid #475569;
+  padding-bottom: 0.375rem;
+}
+
+.chart-tooltip .tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.chart-tooltip .tooltip-label {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.chart-tooltip .tooltip-value {
+  color: #e2e8f0;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.chart-tooltip .tooltip-row.range .tooltip-value {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* More Details section */
+.more-details-section {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #475569;
+}
+
+.more-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  color: #60a5fa;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.2s;
+}
+
+.more-details-header:hover {
+  color: #93c5fd;
+}
+
+.more-details-content {
+  margin-top: 1rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Statistics table */
+.statistics-section {
+  margin-bottom: 1rem;
+}
+
+.statistics-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.statistics-table th,
+.statistics-table td {
+  padding: 0.625rem 0.5rem;
+  text-align: center;
+  border: 1px solid #475569;
+  font-size: 0.8125rem;
+}
+
+.statistics-table th {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+.statistics-table td {
+  color: #e2e8f0;
+}
+
+.statistics-table .period-cell,
+.statistics-table .period-header {
+  text-align: left;
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.grid-point-info {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-style: italic;
+  margin: 1rem 0;
+}
+
+.explore-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #60a5fa;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 0.5rem 0;
+}
+
+.explore-link:hover {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+/* Downloads section */
+.downloads-section {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #475569;
+}
+
+.downloads-header {
+  color: #e2e8f0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.download-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.625rem 0;
+  background: none;
+  border: none;
+  color: #60a5fa;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  text-align: left;
+}
+
+.download-item:hover {
+  color: #93c5fd;
+}
+
+.download-item svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Panel footer */
+.panel-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #475569;
+}
+
+.data-source {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+/* Panel scrollbar */
+.district-detail-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.district-detail-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.district-detail-panel::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.district-detail-panel::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Mobile responsive - District Detail Panel */
+@media (max-width: 768px) {
+  .district-detail-panel {
+    width: 100%;
+    top: auto;
+    bottom: 0;
+    height: 55vh;
+    border-left: none;
+    border-top: 1px solid #475569;
+    border-radius: 16px 16px 0 0;
+    animation: slideUpPanel 0.3s ease-out;
+  }
+
+  @keyframes slideUpPanel {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .district-detail-panel .district-name {
+    font-size: 1.25rem;
+  }
+
+  .value-comparison .value {
+    font-size: 1.125rem;
+  }
+
+  .statistics-table th,
+  .statistics-table td {
+    padding: 0.5rem 0.375rem;
+    font-size: 0.75rem;
+  }
+
+  .change-badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .district-detail-panel {
+    height: 60vh;
+    padding: 1rem;
+  }
+
+  .value-comparison {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .comparison-arrow {
+    transform: rotate(90deg);
+  }
+
+  .value-comparison .period-value {
+    width: 100%;
   }
 }

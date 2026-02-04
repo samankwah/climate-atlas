@@ -14,6 +14,7 @@ export interface InterpolationOptions {
 
 export interface GridResult {
   grid: number[][];
+  mask: boolean[][]; // true if point is inside Ghana boundary
   bounds: {
     north: number;
     south: number;
@@ -25,10 +26,81 @@ export interface GridResult {
   cols: number;
 }
 
+// GeoJSON types for boundary checking
+export type Polygon = number[][][]; // Array of rings, each ring is array of [lon, lat] pairs
+export type MultiPolygon = number[][][][]; // Array of polygons
+
+/**
+ * Ray-casting algorithm to check if a point is inside a polygon
+ * @param lon - Longitude of the point
+ * @param lat - Latitude of the point
+ * @param polygon - Array of [lon, lat] coordinate pairs forming the polygon ring
+ */
+function pointInPolygonRing(lon: number, lat: number, ring: number[][]): boolean {
+  let inside = false;
+  const n = ring.length;
+
+  for (let i = 0, j = n - 1; i < n; j = i++) {
+    const xi = ring[i][0], yi = ring[i][1];
+    const xj = ring[j][0], yj = ring[j][1];
+
+    if (((yi > lat) !== (yj > lat)) &&
+        (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi)) {
+      inside = !inside;
+    }
+  }
+
+  return inside;
+}
+
+/**
+ * Check if a point is inside a polygon (handles holes)
+ */
+function pointInPolygon(lon: number, lat: number, polygon: Polygon): boolean {
+  // Check if inside outer ring
+  if (!pointInPolygonRing(lon, lat, polygon[0])) {
+    return false;
+  }
+
+  // Check if inside any hole (if there are holes)
+  for (let i = 1; i < polygon.length; i++) {
+    if (pointInPolygonRing(lon, lat, polygon[i])) {
+      return false; // Point is in a hole
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Check if a point is inside any of the Ghana region polygons
+ */
+export function pointInGhanaBoundary(
+  lon: number,
+  lat: number,
+  ghanaBoundary: { type: string; coordinates: Polygon | MultiPolygon }[]
+): boolean {
+  for (const geometry of ghanaBoundary) {
+    if (geometry.type === 'Polygon') {
+      if (pointInPolygon(lon, lat, geometry.coordinates as Polygon)) {
+        return true;
+      }
+    } else if (geometry.type === 'MultiPolygon') {
+      const multiPolygon = geometry.coordinates as MultiPolygon;
+      for (const polygon of multiPolygon) {
+        if (pointInPolygon(lon, lat, polygon)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 // Ghana geographic bounds
 export const GHANA_BOUNDS = {
   north: 11.2,
-  south: 3.3,
+  south: 4.74,
   east: 1.2,
   west: -3.3,
 };
@@ -104,34 +176,46 @@ export function idwInterpolate(
 
 /**
  * Generate interpolated grid for the entire bounds
- * Returns a 2D array of interpolated values
+ * Returns a 2D array of interpolated values and a mask for Ghana boundary
  */
 export function generateInterpolatedGrid(
   bounds: { north: number; south: number; east: number; west: number },
   dataPoints: DataPoint[],
   resolution: number,
-  options: InterpolationOptions = {}
+  options: InterpolationOptions = {},
+  ghanaBoundary?: { type: string; coordinates: Polygon | MultiPolygon }[]
 ): GridResult {
   const cols = Math.ceil((bounds.east - bounds.west) / resolution);
   const rows = Math.ceil((bounds.north - bounds.south) / resolution);
 
   const grid: number[][] = [];
+  const mask: boolean[][] = [];
 
   for (let row = 0; row < rows; row++) {
     const gridRow: number[] = [];
+    const maskRow: boolean[] = [];
     const lat = bounds.north - row * resolution - resolution / 2;
 
     for (let col = 0; col < cols; col++) {
       const lon = bounds.west + col * resolution + resolution / 2;
       const value = idwInterpolate(lat, lon, dataPoints, options);
       gridRow.push(value);
+
+      // Check if point is inside Ghana boundary
+      if (ghanaBoundary) {
+        maskRow.push(pointInGhanaBoundary(lon, lat, ghanaBoundary));
+      } else {
+        maskRow.push(true); // No boundary = show everything
+      }
     }
 
     grid.push(gridRow);
+    mask.push(maskRow);
   }
 
   return {
     grid,
+    mask,
     bounds,
     resolution,
     rows,
@@ -196,6 +280,7 @@ export function parseColor(color: string): [number, number, number, number] {
 
 /**
  * Create an ImageData from a grid of values
+ * Uses the mask to only show pixels inside Ghana boundary
  */
 export function gridToImageData(
   gridResult: GridResult,
@@ -204,16 +289,27 @@ export function gridToImageData(
   colorScale: (value: number, min: number, max: number) => string,
   opacity: number = 0.8
 ): ImageData {
-  const { grid, rows, cols } = gridResult;
+  const { grid, mask, rows, cols } = gridResult;
   const imageData = new ImageData(cols, rows);
 
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
+      const pixelIndex = (row * cols + col) * 4;
+
+      // Check if this pixel is inside Ghana boundary
+      if (!mask[row][col]) {
+        // Outside boundary - fully transparent
+        imageData.data[pixelIndex] = 0;
+        imageData.data[pixelIndex + 1] = 0;
+        imageData.data[pixelIndex + 2] = 0;
+        imageData.data[pixelIndex + 3] = 0;
+        continue;
+      }
+
       const value = grid[row][col];
       const color = valueToColor(value, minValue, maxValue, colorScale);
       const [r, g, b] = parseColor(color);
 
-      const pixelIndex = (row * cols + col) * 4;
       imageData.data[pixelIndex] = r;
       imageData.data[pixelIndex + 1] = g;
       imageData.data[pixelIndex + 2] = b;
