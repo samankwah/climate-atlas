@@ -12,6 +12,7 @@ import type {
 import { getColorScale, type ColorScaleType } from "../../utils/colorScales";
 import CityMarkers from "./CityMarkers";
 import InterpolatedLayer from "./InterpolatedLayer";
+import RegionalBoundaries from "./RegionalBoundaries";
 import type { DataPoint } from "../../utils/idwInterpolation";
 import "leaflet/dist/leaflet.css";
 
@@ -181,6 +182,14 @@ const GhanaMap: React.FC<GhanaMapProps> = ({
         data={districts as GeoJsonObject}
         style={style}
         onEachFeature={onEachFeature}
+      />
+
+      {/* Regional boundaries overlay */}
+      <RegionalBoundaries
+        visible={true}
+        color="#ffffff"
+        weight={2}
+        opacity={0.7}
       />
 
       {/* City markers layer */}

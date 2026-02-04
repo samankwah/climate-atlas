@@ -21,7 +21,12 @@
       "Bash(python:*)",
       "Bash(python -c:*)",
       "Bash(pip install:*)",
-      "Bash(venvScriptspython -c \"from app.main import app; print\\(''Backend imports OK''\\)\")"
+      "Bash(venvScriptspython -c \"from app.main import app; print\\(''Backend imports OK''\\)\")",
+      "Bash(powershell -Command \"[System.IO.File]::ReadAllText\\(''ghana_regions.geojson''\\)\")",
+      "Bash(npm uninstall:*)",
+      "Bash(cd:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:www.highcharts.com)"
     ]
   }
 }
