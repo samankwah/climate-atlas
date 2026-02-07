@@ -55,6 +55,52 @@ export const CATEGORY_COLORS: Record<Category, string> = {
   cold_weather: '#0284c7',  // sky-600
 };
 
+// Maps each frontend parameter ID to the closest backend variable ID
+export const PARAMETER_TO_VARIABLE: Record<string, string> = {
+  // Temperature
+  "mean_temp": "annual_mean_temp",
+  "max_temp": "annual_max_temp",
+  "min_temp": "annual_min_temp",
+
+  // Hot Weather
+  "very_hot_days_30": "very_hot_days",
+  "warmest_max_temp": "annual_max_temp",
+  "heat_wave_count": "very_hot_days",
+  "heat_wave_avg_length": "very_hot_days",
+  "longest_hot_spell": "very_hot_days",
+  "hot_season": "very_hot_days",
+  "extreme_hot_32": "very_hot_days",
+  "extreme_hot_34": "very_hot_days",
+
+  // Cold Weather
+  "coldest_min_temp": "annual_mean_temp",
+
+  // Precipitation
+  "heavy_precip_10mm": "annual_precipitation",
+  "heavy_precip_20mm": "annual_precipitation",
+  "wet_days": "wet_season_precipitation",
+  "dry_days": "dry_days",
+  "max_1day_precip": "annual_precipitation",
+  "max_3day_precip": "annual_precipitation",
+  "max_5day_precip": "annual_precipitation",
+
+  // Agriculture (GDD computed on backend from projected temps)
+  "maize_heat_units": "maize_heat_units",
+  "gdd_base_5": "gdd_base_5",
+  "gdd_base_10": "gdd_base_10",
+  "gdd_base_15": "gdd_base_15",
+  "gdd_base_4": "gdd_base_4",
+};
+
+// Default backend variable to show on map when a category tab is clicked
+export const CATEGORY_DEFAULT_VARIABLE: Record<Category, string> = {
+  temperature: "annual_max_temp",
+  hot_weather: "very_hot_days",
+  cold_weather: "annual_mean_temp",
+  precipitation: "annual_precipitation",
+  agriculture: "gdd_base_10",
+};
+
 export const getCategoryLabel = (category: Category): string => {
   const labels: Record<Category, string> = {
     precipitation: 'PRECIPITATION',

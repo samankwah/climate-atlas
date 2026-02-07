@@ -3,13 +3,14 @@
 import { useState, useRef } from 'react';
 import CategoryPanel from './CategoryPanel';
 import ParameterInfoModal from './ParameterInfoModal';
-import { CATEGORY_PARAMETERS, CATEGORY_COLORS, getCategoryLabel } from './categoryParameters';
+import { CATEGORY_PARAMETERS, CATEGORY_COLORS, getCategoryLabel, PARAMETER_TO_VARIABLE, CATEGORY_DEFAULT_VARIABLE } from './categoryParameters';
 
 export type Category = "hot_weather" | "cold_weather" | "temperature" | "precipitation" | "agriculture";
 
 interface CategoryTabsProps {
   activeCategory: Category;
   onCategoryChange: (category: Category) => void;
+  onParameterSelect: (variableId: string) => void;
 }
 
 // SVG Icons for each category
@@ -66,6 +67,7 @@ type SelectionsState = Record<Category, string[]>;
 const CategoryTabs: React.FC<CategoryTabsProps> = ({
   activeCategory,
   onCategoryChange,
+  onParameterSelect,
 }) => {
   // Track which panel is open
   const [openPanel, setOpenPanel] = useState<Category | null>(null);
@@ -103,18 +105,43 @@ const CategoryTabs: React.FC<CategoryTabsProps> = ({
       // Open panel for this category
       setOpenPanel(categoryId);
       onCategoryChange(categoryId);
+
+      // Immediately show default variable for this category on the map
+      const defaultVariable = CATEGORY_DEFAULT_VARIABLE[categoryId];
+      onParameterSelect(defaultVariable);
+
+      // Visually select the first parameter of this category
+      const firstParam = CATEGORY_PARAMETERS[categoryId][0];
+      setSelections({
+        precipitation: [],
+        agriculture: [],
+        hot_weather: [],
+        temperature: [],
+        cold_weather: [],
+        [categoryId]: [firstParam.id],
+      });
     }
   };
 
   const handleToggleParameter = (categoryId: Category, parameterId: string) => {
-    setSelections((prev) => {
-      const current = prev[categoryId];
-      if (current.includes(parameterId)) {
-        return { ...prev, [categoryId]: current.filter((id) => id !== parameterId) };
-      } else {
-        return { ...prev, [categoryId]: [...current, parameterId] };
-      }
+    // Single-select: clear all categories, set only the clicked parameter
+    setSelections({
+      precipitation: [],
+      agriculture: [],
+      hot_weather: [],
+      temperature: [],
+      cold_weather: [],
+      [categoryId]: [parameterId],
     });
+
+    // Map frontend parameter to backend variable and notify parent
+    const variableId = PARAMETER_TO_VARIABLE[parameterId];
+    if (variableId) {
+      onParameterSelect(variableId);
+    }
+
+    // Close the panel after selection
+    setOpenPanel(null);
   };
 
   const handleClosePanel = () => {

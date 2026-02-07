@@ -48,15 +48,16 @@ function ClimateAtlas() {
     scenario,
     selectedDistrictId,
     showChange,
-    setVariable: _setVariable,
+    setVariable,
     setPeriod,
     setScenario,
     selectDistrict,
     toggleShowChange,
   } = useMapControls();
 
-  // Keep setVariable available for future use
-  void _setVariable;
+  const handleParameterSelect = useCallback((variableId: string) => {
+    setVariable(variableId);
+  }, [setVariable]);
 
   // Data fetching
   const { data: districts, isLoading: loadingDistricts, isError: districtsError, refetch: refetchDistricts } = useDistricts();
@@ -240,6 +241,7 @@ function ClimateAtlas() {
           <CategoryTabs
             activeCategory={activeCategory}
             onCategoryChange={setActiveCategory}
+            onParameterSelect={handleParameterSelect}
           />
         </div>
       </div>

@@ -73,27 +73,84 @@ CLIMATE_VARIABLES = [
         "category": "precipitation",
         "color_scale": "dry_days",
     },
+    {
+        "id": "annual_min_temp",
+        "name": "Annual Minimum Temperature",
+        "description": "Average of daily minimum temperatures over the year",
+        "unit": "°C",
+        "category": "temperature",
+        "color_scale": "temperature",
+    },
+    {
+        "id": "gdd_base_4",
+        "name": "Growing Degree Days (Base 4 °C)",
+        "description": "Accumulated thermal units above 4°C base temperature",
+        "unit": "°C·days",
+        "category": "agriculture",
+        "color_scale": "temperature",
+    },
+    {
+        "id": "gdd_base_5",
+        "name": "Growing Degree Days (Base 5 °C)",
+        "description": "Accumulated thermal units above 5°C base temperature",
+        "unit": "°C·days",
+        "category": "agriculture",
+        "color_scale": "temperature",
+    },
+    {
+        "id": "gdd_base_10",
+        "name": "Growing Degree Days (Base 10 °C)",
+        "description": "Accumulated thermal units above 10°C base temperature",
+        "unit": "°C·days",
+        "category": "agriculture",
+        "color_scale": "temperature",
+    },
+    {
+        "id": "gdd_base_15",
+        "name": "Growing Degree Days (Base 15 °C)",
+        "description": "Accumulated thermal units above 15°C base temperature",
+        "unit": "°C·days",
+        "category": "agriculture",
+        "color_scale": "temperature",
+    },
+    {
+        "id": "maize_heat_units",
+        "name": "Maize Heat Units",
+        "description": "Growing degree days with base 10°C for maize cultivation",
+        "unit": "°C·days",
+        "category": "agriculture",
+        "color_scale": "temperature",
+    },
 ]
+
+# GDD variable IDs and their base temperatures
+GDD_VARIABLES = {
+    "gdd_base_4": 4,
+    "gdd_base_5": 5,
+    "gdd_base_10": 10,
+    "gdd_base_15": 15,
+    "maize_heat_units": 10,
+}
 
 # Baseline climate values by region (realistic for Ghana)
 # Northern regions are hotter and drier, southern coastal regions cooler and wetter
 REGIONAL_BASELINES = {
-    "Greater Accra": {"annual_mean_temp": 27.5, "annual_max_temp": 32.0, "very_hot_days": 20, "annual_precipitation": 810, "wet_season_precipitation": 720, "dry_days": 180},
-    "Ashanti": {"annual_mean_temp": 26.0, "annual_max_temp": 31.0, "very_hot_days": 15, "annual_precipitation": 1400, "wet_season_precipitation": 1200, "dry_days": 140},
-    "Western": {"annual_mean_temp": 26.5, "annual_max_temp": 31.5, "very_hot_days": 12, "annual_precipitation": 1700, "wet_season_precipitation": 1450, "dry_days": 120},
-    "Central": {"annual_mean_temp": 26.8, "annual_max_temp": 31.8, "very_hot_days": 18, "annual_precipitation": 1100, "wet_season_precipitation": 950, "dry_days": 160},
-    "Eastern": {"annual_mean_temp": 26.2, "annual_max_temp": 31.2, "very_hot_days": 14, "annual_precipitation": 1500, "wet_season_precipitation": 1280, "dry_days": 135},
-    "Volta": {"annual_mean_temp": 27.0, "annual_max_temp": 32.5, "very_hot_days": 22, "annual_precipitation": 1200, "wet_season_precipitation": 1020, "dry_days": 155},
-    "Northern": {"annual_mean_temp": 28.5, "annual_max_temp": 35.0, "very_hot_days": 85, "annual_precipitation": 1050, "wet_season_precipitation": 980, "dry_days": 200},
-    "Upper East": {"annual_mean_temp": 29.0, "annual_max_temp": 36.0, "very_hot_days": 110, "annual_precipitation": 950, "wet_season_precipitation": 900, "dry_days": 220},
-    "Upper West": {"annual_mean_temp": 28.8, "annual_max_temp": 35.5, "very_hot_days": 95, "annual_precipitation": 1000, "wet_season_precipitation": 940, "dry_days": 210},
-    "Bono": {"annual_mean_temp": 26.5, "annual_max_temp": 32.0, "very_hot_days": 25, "annual_precipitation": 1250, "wet_season_precipitation": 1100, "dry_days": 150},
-    "Bono East": {"annual_mean_temp": 27.0, "annual_max_temp": 33.0, "very_hot_days": 35, "annual_precipitation": 1200, "wet_season_precipitation": 1050, "dry_days": 165},
-    "Ahafo": {"annual_mean_temp": 26.3, "annual_max_temp": 31.5, "very_hot_days": 18, "annual_precipitation": 1350, "wet_season_precipitation": 1180, "dry_days": 145},
-    "Western North": {"annual_mean_temp": 26.0, "annual_max_temp": 31.0, "very_hot_days": 10, "annual_precipitation": 1600, "wet_season_precipitation": 1380, "dry_days": 125},
-    "Oti": {"annual_mean_temp": 27.5, "annual_max_temp": 33.5, "very_hot_days": 45, "annual_precipitation": 1150, "wet_season_precipitation": 1000, "dry_days": 175},
-    "North East": {"annual_mean_temp": 28.8, "annual_max_temp": 35.8, "very_hot_days": 100, "annual_precipitation": 980, "wet_season_precipitation": 920, "dry_days": 215},
-    "Savannah": {"annual_mean_temp": 28.2, "annual_max_temp": 34.5, "very_hot_days": 70, "annual_precipitation": 1080, "wet_season_precipitation": 1000, "dry_days": 195},
+    "Greater Accra": {"annual_mean_temp": 27.5, "annual_max_temp": 32.0, "annual_min_temp": 23.0, "very_hot_days": 20, "annual_precipitation": 810, "wet_season_precipitation": 720, "dry_days": 180},
+    "Ashanti": {"annual_mean_temp": 26.0, "annual_max_temp": 31.0, "annual_min_temp": 21.0, "very_hot_days": 15, "annual_precipitation": 1400, "wet_season_precipitation": 1200, "dry_days": 140},
+    "Western": {"annual_mean_temp": 26.5, "annual_max_temp": 31.5, "annual_min_temp": 21.5, "very_hot_days": 12, "annual_precipitation": 1700, "wet_season_precipitation": 1450, "dry_days": 120},
+    "Central": {"annual_mean_temp": 26.8, "annual_max_temp": 31.8, "annual_min_temp": 21.8, "very_hot_days": 18, "annual_precipitation": 1100, "wet_season_precipitation": 950, "dry_days": 160},
+    "Eastern": {"annual_mean_temp": 26.2, "annual_max_temp": 31.2, "annual_min_temp": 21.2, "very_hot_days": 14, "annual_precipitation": 1500, "wet_season_precipitation": 1280, "dry_days": 135},
+    "Volta": {"annual_mean_temp": 27.0, "annual_max_temp": 32.5, "annual_min_temp": 21.5, "very_hot_days": 22, "annual_precipitation": 1200, "wet_season_precipitation": 1020, "dry_days": 155},
+    "Northern": {"annual_mean_temp": 28.5, "annual_max_temp": 35.0, "annual_min_temp": 22.0, "very_hot_days": 85, "annual_precipitation": 1050, "wet_season_precipitation": 980, "dry_days": 200},
+    "Upper East": {"annual_mean_temp": 29.0, "annual_max_temp": 36.0, "annual_min_temp": 22.0, "very_hot_days": 110, "annual_precipitation": 950, "wet_season_precipitation": 900, "dry_days": 220},
+    "Upper West": {"annual_mean_temp": 28.8, "annual_max_temp": 35.5, "annual_min_temp": 22.1, "very_hot_days": 95, "annual_precipitation": 1000, "wet_season_precipitation": 940, "dry_days": 210},
+    "Bono": {"annual_mean_temp": 26.5, "annual_max_temp": 32.0, "annual_min_temp": 21.0, "very_hot_days": 25, "annual_precipitation": 1250, "wet_season_precipitation": 1100, "dry_days": 150},
+    "Bono East": {"annual_mean_temp": 27.0, "annual_max_temp": 33.0, "annual_min_temp": 21.0, "very_hot_days": 35, "annual_precipitation": 1200, "wet_season_precipitation": 1050, "dry_days": 165},
+    "Ahafo": {"annual_mean_temp": 26.3, "annual_max_temp": 31.5, "annual_min_temp": 21.1, "very_hot_days": 18, "annual_precipitation": 1350, "wet_season_precipitation": 1180, "dry_days": 145},
+    "Western North": {"annual_mean_temp": 26.0, "annual_max_temp": 31.0, "annual_min_temp": 21.0, "very_hot_days": 10, "annual_precipitation": 1600, "wet_season_precipitation": 1380, "dry_days": 125},
+    "Oti": {"annual_mean_temp": 27.5, "annual_max_temp": 33.5, "annual_min_temp": 21.5, "very_hot_days": 45, "annual_precipitation": 1150, "wet_season_precipitation": 1000, "dry_days": 175},
+    "North East": {"annual_mean_temp": 28.8, "annual_max_temp": 35.8, "annual_min_temp": 21.8, "very_hot_days": 100, "annual_precipitation": 980, "wet_season_precipitation": 920, "dry_days": 215},
+    "Savannah": {"annual_mean_temp": 28.2, "annual_max_temp": 34.5, "annual_min_temp": 21.9, "very_hot_days": 70, "annual_precipitation": 1080, "wet_season_precipitation": 1000, "dry_days": 195},
 }
 
 # Climate change factors by scenario and period
@@ -126,7 +183,7 @@ def get_climate_value(baseline: float, variable: str, scenario: str, period: str
 
     factors = CLIMATE_CHANGE_FACTORS.get(scenario, {}).get(period, {})
 
-    if variable in ["annual_mean_temp", "annual_max_temp"]:
+    if variable in ["annual_mean_temp", "annual_max_temp", "annual_min_temp"]:
         return round(baseline + factors.get("temp_add", 0), 1)
     elif variable in ["annual_precipitation", "wet_season_precipitation"]:
         return round(baseline * factors.get("precip_mult", 1), 0)
@@ -158,6 +215,9 @@ def get_district_climate_data(district_id: str, region: str):
     climate_data = {}
     for var in CLIMATE_VARIABLES:
         var_id = var["id"]
+        # Skip GDD variables — they are computed on the fly from projected temps
+        if var_id in GDD_VARIABLES:
+            continue
         var_data = {
             "baseline": get_climate_value(baseline[var_id], var_id, "baseline", "baseline"),
         }
